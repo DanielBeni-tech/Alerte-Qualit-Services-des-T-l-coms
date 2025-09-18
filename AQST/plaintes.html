@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plaintes - Alerte Qualite Service</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Styles existants */
+        /* ... existing code ... */
+
+        /* Styles pour les réactions */
+        .reaction-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .reaction-button {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border: 2px solid transparent;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 14px;
+            font-weight: 500;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .reaction-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .reaction-button.like {
+            color: #28a745;
+            border-color: #28a745;
+        }
+
+        .reaction-button.dislike {
+            color: #dc3545;
+            border-color: #dc3545;
+        }
+
+        .reaction-button.active {
+            color: white;
+        }
+
+        .reaction-button.like.active {
+            background: #28a745;
+        }
+
+        .reaction-button.dislike.active {
+            background: #dc3545;
+        }
+
+        .reaction-button i {
+            font-size: 18px;
+            transition: transform 0.3s ease;
+        }
+
+        .reaction-button:hover i {
+            transform: scale(1.2);
+        }
+
+        .reaction-count {
+            font-weight: 600;
+            min-width: 24px;
+            text-align: center;
+            padding: 2px 6px;
+            border-radius: 12px;
+            background: rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .reaction-button.active .reaction-count {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .reaction-stats {
+            display: flex;
+            gap: 20px;
+            margin-top: 8px;
+            font-size: 13px;
+            color: #6c757d;
+            padding: 0 10px;
+        }
+
+        .reaction-stats span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .reaction-stats i {
+            font-size: 14px;
+        }
+
+        /* Animation pour les réactions */
+        @keyframes reactionPop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .reaction-button:active i {
+            animation: reactionPop 0.3s ease;
+        }
+
+        /* Style pour le conteneur des réactions */
+        .complaint-reactions {
+            margin-top: 15px;
+            padding: 15px;
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        /* Styles pour les commentaires */
+        .complaint-comments {
+            margin-top: 15px;
+            padding: 15px;
+            background: #f0f7ff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border: 1px solid #e1eeff;
+        }
+
+        .complaint-comments h4 {
+            color: #1a73e8;
+            font-size: 16px;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #e1eeff;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .complaint-comments h4 i {
+            color: #1a73e8;
+        }
+
+        .comments-list {
+            max-height: 200px;
+            overflow-y: auto;
+            padding-right: 8px;
+            margin-bottom: 15px;
+        }
+
+        .comments-list::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .comments-list::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .comments-list::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+
+        .comment {
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 10px;
+            transition: transform 0.2s ease;
+            border-left: 3px solid #1a73e8;
+            box-shadow: 0 1px 3px rgba(26, 115, 232, 0.1);
+        }
+
+        .comment:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 8px rgba(26, 115, 232, 0.15);
+        }
+
+        .comment-header {
+            margin-bottom: 6px;
+        }
+
+        .comment-header strong {
+            font-size: 14px;
+        }
+
+        .comment-header small {
+            font-size: 11px;
+        }
+
+        .comment-content {
+            font-size: 13px;
+            padding: 8px;
+            line-height: 1.4;
+        }
+
+        .comment-form {
+            background: #ffffff;
+            padding: 12px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(26, 115, 232, 0.1);
+            border: 1px solid #e1eeff;
+        }
+
+        .comment-form input,
+        .comment-form textarea {
+            padding: 8px;
+            margin-bottom: 10px;
+            font-size: 13px;
+        }
+
+        .comment-form textarea {
+            min-height: 60px;
+        }
+
+        .comment-form button {
+            padding: 8px 15px;
+            font-size: 13px;
+        }
+
+        .no-comments {
+            padding: 12px;
+            font-size: 13px;
+        }
+
+        .no-comments i {
+            font-size: 20px;
+            margin-bottom: 6px;
+        }
+
+        /* Animation pour les nouveaux commentaires */
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .comment.new-comment {
+            animation: slideIn 0.3s ease-out;
+        }
+
+        /* Styles pour la pagination */
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 30px 0;
+            gap: 15px;
+        }
+
+        .pagination {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: white;
+            padding: 10px 20px;
+            border-radius: 50px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .pagination-button {
+            background: none;
+            border: none;
+            color: #2c3e50;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .pagination-button:hover:not(:disabled) {
+            background: #f8f9fa;
+            transform: translateY(-2px);
+        }
+
+        .pagination-button:disabled {
+            color: #bdc3c7;
+            cursor: not-allowed;
+        }
+
+        .pagination-button.active {
+            background: #3498db;
+            color: white;
+        }
+
+        .pagination-button i {
+            font-size: 14px;
+        }
+
+        .page-info {
+            color: #7f8c8d;
+            font-size: 14px;
+            padding: 0 15px;
+            border-left: 1px solid #e9ecef;
+            border-right: 1px solid #e9ecef;
+        }
+
+        .items-per-page {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: white;
+            padding: 8px 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .items-per-page select {
+            border: 1px solid #e9ecef;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 14px;
+            color: #2c3e50;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .items-per-page select:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .loading-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <h1>Alerte Qualite <span>Service</span></h1>
+        </div>
+        <nav>
+            <div class="menu-toggle">
+                <i class="fas fa-bars"></i>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html">Accueil</a></li>
+                <li><a href="plaintes.html" class="active">Plaintes</a></li>
+                <li><a href="soumettre.html">Soumettre</a></li>
+                <li><a href="operateurs.html">Opérateurs</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="login.html">Dashboards</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="page-header">
+        <h2>Plaintes des utilisateurs</h2>
+        <p>Découvrez les expériences partagées par les utilisateurs des services télécom au Cameroun</p>
+    </div>
+
+    <section class="complaints-filters">
+        <div class="filter-container">
+            <div class="filter-group">
+                <label for="filter-operator">Opérateur:</label>
+                <select id="filter-operator">
+                    <option value="tous">Tous les opérateurs</option>
+                    <option value="MTN">MTN Cameroun</option>
+                    <option value="Orange">Orange Cameroun</option>
+                    <option value="Nexttel">Nexttel</option>
+                    <option value="Camtel">Camtel</option>
+                    <option value="Autre">Autre</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="filter-region">Région:</label>
+                <select id="filter-region">
+                    <option value="toutes">Toutes les régions</option>
+                    <option value="Adamaoua">Adamaoua</option>
+                    <option value="Centre">Centre</option>
+                    <option value="Est">Est</option>
+                    <option value="Extrême-Nord">Extrême-Nord</option>
+                    <option value="Littoral">Littoral</option>
+                    <option value="Nord">Nord</option>
+                    <option value="Nord-Ouest">Nord-Ouest</option>
+                    <option value="Ouest">Ouest</option>
+                    <option value="Sud">Sud</option>
+                    <option value="Sud-Ouest">Sud-Ouest</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="filter-category">Catégorie:</label>
+                <select id="filter-category">
+                    <option value="toutes">Toutes les catégories</option>
+                    <option value="Couverture réseau">Couverture réseau</option>
+                    <option value="Vitesse Internet">Vitesse Internet</option>
+                    <option value="Facturation">Facturation</option>
+                    <option value="Service client">Service client</option>
+                    <option value="Qualité des appels">Qualité des appels</option>
+                    <option value="Données mobiles">Données mobiles</option>
+                    <option value="SMS/MMS">SMS/MMS</option>
+                    <option value="Coupures">Coupures de service</option>
+                    <option value="Autre">Autre</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="search-complaints">Rechercher:</label>
+                <input type="text" id="search-complaints" placeholder="Mot-clé...">
+            </div>
+        </div>
+        <button id="apply-filters" class="btn btn-secondary">Appliquer les filtres</button>
+    </section>
+
+    <section class="complaints-list">
+        <div class="complaints-container" id="complaints-list">
+            <div id="loading-indicator" style="display: none; text-align: center; padding: 20px;">
+                <i class="fas fa-spinner fa-spin"></i> Chargement des plaintes...
+            </div>
+            <div id="error-message" style="display: none; text-align: center; padding: 20px; color: red;">
+            </div>
+        </div>
+
+        <div class="pagination-container">
+        <div class="pagination">
+                <button class="pagination-button" id="first-page" onclick="goToPage(1)">
+                    <i class="fas fa-angle-double-left"></i>
+                </button>
+                <button class="pagination-button" id="prev-page" onclick="goToPage(currentPage - 1)">
+                    <i class="fas fa-angle-left"></i>
+                </button>
+                <div class="page-info">
+                    Page <span id="current-page">1</span> sur <span id="total-pages">1</span>
+                </div>
+                <button class="pagination-button" id="next-page" onclick="goToPage(currentPage + 1)">
+                    <i class="fas fa-angle-right"></i>
+                </button>
+                <button class="pagination-button" id="last-page" onclick="goToPage(totalPages)">
+                    <i class="fas fa-angle-double-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="loading-overlay">
+            <div class="loading-spinner"></div>
+        </div>
+    </section>
+
+    <section class="cta">
+        <h2>Vous avez également rencontré des problèmes?</h2>
+        <p>Partagez votre expérience et contribuez à améliorer la qualité des services télécom au Cameroun.</p>
+        <a href="soumettre.html" class="btn btn-large">Soumettre une plainte maintenant</a>
+    </section>
+
+    <footer>
+        <div class="footer-container">
+            <div class="footer-section">
+                <h3>Alerte Qualite Service</h3>
+                <p>Initiative citoyenne pour l'amélioration des services télécom au Cameroun.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Liens rapides</h3>
+                <ul>
+                    <li><a href="index.html">Accueil</a></li>
+                    <li><a href="plaintes.html">Plaintes</a></li>
+                    <li><a href="soumettre.html">Soumettre</a></li>
+                    <li><a href="operateurs.html">Opérateurs</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Suivez-nous</h3>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2025 Alerte Qualite Service. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Variables globales pour la pagination
+        let currentPage = 1;
+        let totalPages = 1;
+        let itemsPerPage = 2;
+        let allPlaintes = [];
+
+        // Fonction pour formater la date
+        function formatDate(dateString) {
+            const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
+            return new Date(dateString).toLocaleDateString('fr-FR', options);
+        }
+
+        // Fonction pour créer une carte de plainte
+        function createComplaintCard(complaint) {
+            return `
+                <div class="complaint-card" data-id="${complaint.id}">
+                    <div class="complaint-header">
+                        <h3>${complaint.type_plainte}</h3>
+                        <div class="complaint-meta">
+                            <span class="operator"><i class="fas fa-broadcast-tower"></i> ${complaint.operateur_nom}</span>
+                            <span class="location"><i class="fas fa-map-marker-alt"></i> ${complaint.region}, ${complaint.ville}</span>
+                            <span class="date"><i class="far fa-calendar-alt"></i> ${formatDate(complaint.date_plainte)}</span>
+                            <span class="status"><i class="fas fa-info-circle"></i> ${complaint.statut}</span>
+                        </div>
+                    </div>
+                    <div class="complaint-body">
+                        <p>${complaint.description}</p>
+                    </div>
+                    <div class="complaint-footer">
+                        <div class="category-tag">${complaint.type_plainte}</div>
+                        <div class="plaignant-info">
+                            <small>Par: ${complaint.nom_plaignant}</small>
+                        </div>
+                    </div>
+                    <div class="complaint-reactions">
+                        <div class="reaction-stats">
+                            <span class="likes"><i class="fas fa-thumbs-up"></i> <span class="likes-count">0</span></span>
+                            <span class="dislikes"><i class="fas fa-thumbs-down"></i> <span class="dislikes-count">0</span></span>
+                        </div>
+                        <div class="reaction-buttons">
+                            <button class="btn-reaction like" onclick="reactToComplaint(${complaint.id}, 'like')">
+                                <i class="fas fa-thumbs-up"></i> J'approuve
+                            </button>
+                            <button class="btn-reaction dislike" onclick="reactToComplaint(${complaint.id}, 'dislike')">
+                                <i class="fas fa-thumbs-down"></i> Je désapprouve
+                            </button>
+                        </div>
+                    </div>
+                    <div class="complaint-comments">
+                        <h4><i class="fas fa-comments"></i> Commentaires</h4>
+                        <div class="comments-list" id="comments-${complaint.id}">
+                            <!-- Les commentaires seront chargés ici -->
+                        </div>
+                        <div class="comment-form">
+                            <input type="text" id="comment-name-${complaint.id}" placeholder="Votre nom" required>
+                            <input type="email" id="comment-email-${complaint.id}" placeholder="Votre email" required>
+                            <textarea id="comment-content-${complaint.id}" placeholder="Partagez votre point de vue..." required></textarea>
+                            <button onclick="addComment(${complaint.id})">
+                                <i class="fas fa-paper-plane"></i> Publier
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Fonction pour réagir à une plainte
+        async function reactToComplaint(plainteId, reaction) {
+            try {
+                const response = await fetch('backend/controllers/CommentaireController.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        plainte_id: plainteId,
+                        nom_utilisateur: 'Anonyme',
+                        email: 'anonyme@example.com',
+                        contenu: `Réaction: ${reaction}`,
+                        type_reaction: reaction
+                    })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    loadReactionStats(plainteId);
+                } else {
+                    alert('Erreur lors de l\'enregistrement de la réaction');
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+                alert('Erreur lors de l\'enregistrement de la réaction');
+            }
+        }
+
+        // Fonction pour ajouter un commentaire
+        async function addComment(plainteId) {
+            const nameInput = document.getElementById(`comment-name-${plainteId}`);
+            const emailInput = document.getElementById(`comment-email-${plainteId}`);
+            const contentInput = document.getElementById(`comment-content-${plainteId}`);
+
+            if (!nameInput.value || !emailInput.value || !contentInput.value) {
+                showAlert('Veuillez remplir tous les champs', 'warning');
+                return;
+            }
+
+            try {
+                const response = await fetch('backend/controllers/CommentaireController.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        plainte_id: plainteId,
+                        nom_utilisateur: nameInput.value,
+                        email: emailInput.value,
+                        contenu: contentInput.value,
+                        type_reaction: 'neutre'
+                    })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    // Ajouter le nouveau commentaire avec animation
+                    const commentsContainer = document.getElementById(`comments-${plainteId}`);
+                    const newComment = document.createElement('div');
+                    newComment.className = 'comment new-comment';
+                    newComment.innerHTML = `
+                        <div class="comment-header">
+                            <strong><i class="fas fa-user"></i> ${nameInput.value}</strong>
+                            <small><i class="far fa-clock"></i> ${formatDate(new Date())}</small>
+                        </div>
+                        <div class="comment-content">
+                            ${contentInput.value}
+                        </div>
+                    `;
+                    commentsContainer.insertBefore(newComment, commentsContainer.firstChild);
+
+                    // Réinitialiser le formulaire
+                    nameInput.value = '';
+                    emailInput.value = '';
+                    contentInput.value = '';
+
+                    showAlert('Commentaire ajouté avec succès !', 'success');
+                } else {
+                    showAlert('Erreur lors de l\'ajout du commentaire', 'error');
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+                showAlert('Erreur lors de l\'ajout du commentaire', 'error');
+            }
+        }
+
+        // Fonction pour charger les commentaires
+        async function loadComments(plainteId) {
+            try {
+                const response = await fetch(`backend/controllers/CommentaireController.php?plainte_id=${plainteId}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    const commentsContainer = document.getElementById(`comments-${plainteId}`);
+                    commentsContainer.innerHTML = '';
+                    
+                    if (data.records.length === 0) {
+                        commentsContainer.innerHTML = `
+                            <div class="no-comments">
+                                <i class="fas fa-comment-slash"></i>
+                                <p>Aucun commentaire pour le moment</p>
+                                <small>Soyez le premier à commenter !</small>
+                            </div>
+                        `;
+                    } else {
+                        data.records.forEach(comment => {
+                            commentsContainer.innerHTML += `
+                                <div class="comment">
+                                    <div class="comment-header">
+                                        <strong><i class="fas fa-user"></i> ${comment.nom_utilisateur}</strong>
+                                        <small><i class="far fa-clock"></i> ${formatDate(comment.date_commentaire)}</small>
+                                    </div>
+                                    <div class="comment-content">
+                                        ${comment.contenu}
+                                    </div>
+                                </div>
+                            `;
+                        });
+                    }
+                }
+            } catch (error) {
+                console.error('Erreur lors du chargement des commentaires:', error);
+            }
+        }
+
+        // Fonction pour charger les statistiques des réactions
+        async function loadReactionStats(plainteId) {
+            try {
+                const response = await fetch(`backend/controllers/CommentaireController.php?plainte_id=${plainteId}&stats=true`);
+                const data = await response.json();
+                
+                if (data.success && data.stats) {
+                    const card = document.querySelector(`.complaint-card[data-id="${plainteId}"]`);
+                    const likesCount = card.querySelector('.likes-count');
+                    const dislikesCount = card.querySelector('.dislikes-count');
+                    
+                    let likes = 0;
+                    let dislikes = 0;
+                    
+                    data.stats.forEach(stat => {
+                        if (stat.type_reaction === 'like') likes = stat.total;
+                        if (stat.type_reaction === 'dislike') dislikes = stat.total;
+                    });
+                    
+                    likesCount.textContent = likes;
+                    dislikesCount.textContent = dislikes;
+                }
+            } catch (error) {
+                console.error('Erreur lors du chargement des statistiques:', error);
+            }
+        }
+
+        // Fonction pour charger les plaintes avec pagination
+        async function loadPlaintes() {
+            showLoading(true);
+            try {
+                const response = await fetch('backend/controllers/PlainteController.php');
+                if (!response.ok) {
+                    throw new Error(`Erreur HTTP: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                if (data.success && data.records) {
+                    allPlaintes = data.records;
+                    totalPages = Math.ceil(allPlaintes.length / itemsPerPage);
+                    updatePagination();
+                    displayCurrentPage();
+                } else {
+                    throw new Error(data.message || 'Erreur lors du chargement des plaintes');
+                }
+            } catch (error) {
+                console.error('Erreur lors du chargement des plaintes:', error);
+                showAlert('Impossible de charger les plaintes. Veuillez réessayer plus tard.', 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Fonction pour afficher la page courante
+        function displayCurrentPage() {
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const currentPlaintes = allPlaintes.slice(startIndex, endIndex);
+            
+            const complaintsList = document.getElementById('complaints-list');
+            complaintsList.innerHTML = '';
+            
+            if (currentPlaintes.length === 0) {
+                complaintsList.innerHTML = '<div class="no-complaints">Aucune plainte trouvée</div>';
+            } else {
+                currentPlaintes.forEach(complaint => {
+                    complaintsList.innerHTML += createComplaintCard(complaint);
+                    loadComments(complaint.id);
+                    loadReactionStats(complaint.id);
+                });
+            }
+        }
+
+        // Fonction pour mettre à jour la pagination
+        function updatePagination() {
+            document.getElementById('current-page').textContent = currentPage;
+            document.getElementById('total-pages').textContent = totalPages;
+            
+            document.getElementById('first-page').disabled = currentPage === 1;
+            document.getElementById('prev-page').disabled = currentPage === 1;
+            document.getElementById('next-page').disabled = currentPage === totalPages;
+            document.getElementById('last-page').disabled = currentPage === totalPages;
+        }
+
+        // Fonction pour changer de page
+        function goToPage(page) {
+            if (page < 1 || page > totalPages) return;
+            currentPage = page;
+            updatePagination();
+            displayCurrentPage();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Fonction pour afficher/masquer le loading
+        function showLoading(show) {
+            const overlay = document.querySelector('.loading-overlay');
+            if (show) {
+                overlay.classList.add('active');
+            } else {
+                overlay.classList.remove('active');
+            }
+        }
+
+        // Modifier la fonction applyFilters pour prendre en compte la pagination
+        function applyFilters() {
+            const operator = document.getElementById('filter-operator').value;
+            const region = document.getElementById('filter-region').value;
+            const category = document.getElementById('filter-category').value;
+            const search = document.getElementById('search-complaints').value.toLowerCase();
+
+            const filteredPlaintes = allPlaintes.filter(complaint => {
+                const operatorMatch = operator === 'tous' || complaint.operateur_nom.includes(operator);
+                const regionMatch = region === 'toutes' || complaint.region.includes(region);
+                const categoryMatch = category === 'toutes' || complaint.type_plainte === category;
+                const searchMatch = !search || 
+                    complaint.description.toLowerCase().includes(search) ||
+                    complaint.nom_plaignant.toLowerCase().includes(search);
+
+                return operatorMatch && regionMatch && categoryMatch && searchMatch;
+            });
+
+            allPlaintes = filteredPlaintes;
+            currentPage = 1;
+            totalPages = Math.ceil(allPlaintes.length / itemsPerPage);
+            updatePagination();
+            displayCurrentPage();
+        }
+
+        // Charger les plaintes au chargement de la page
+        document.addEventListener('DOMContentLoaded', loadPlaintes);
+
+        // Recharger les plaintes toutes les 30 secondes seulement si la page est visible
+        let refreshInterval;
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden) {
+                clearInterval(refreshInterval);
+            } else {
+                loadPlaintes();
+                refreshInterval = setInterval(loadPlaintes, 30000);
+            }
+        });
+
+        // Fonction pour gérer les réactions
+        async function handleReaction(plainteId, type) {
+            try {
+                const email = localStorage.getItem('userEmail');
+                if (!email) {
+                    showAlert('Veuillez vous connecter pour réagir', 'warning');
+                    return;
+                }
+
+                const response = await fetch('backend/controllers/ReactionController.php?action=add', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        plainte_id: plainteId,
+                        email: email,
+                        type_reaction: type
+                    })
+                });
+
+                const data = await response.json();
+                if (data.status === 'success') {
+                    updateReactionUI(plainteId);
+                } else {
+                    showAlert(data.message, 'error');
+                }
+            } catch (error) {
+                console.error('Erreur lors de la réaction:', error);
+                showAlert('Erreur lors de la réaction', 'error');
+            }
+        }
+
+        // Fonction pour mettre à jour l'interface des réactions
+        async function updateReactionUI(plainteId) {
+            try {
+                const email = localStorage.getItem('userEmail');
+                if (!email) return;
+
+                // Récupérer les statistiques
+                const statsResponse = await fetch(`backend/controllers/ReactionController.php?action=stats&plainte_id=${plainteId}`);
+                const statsData = await statsResponse.json();
+                
+                if (statsData.status === 'success') {
+                    const stats = statsData.data;
+                    const likeCount = stats.find(s => s.type_reaction === 'like')?.total || 0;
+                    const dislikeCount = stats.find(s => s.type_reaction === 'dislike')?.total || 0;
+
+                    document.getElementById(`like-count-${plainteId}`).textContent = likeCount;
+                    document.getElementById(`dislike-count-${plainteId}`).textContent = dislikeCount;
+                }
+
+                // Vérifier la réaction de l'utilisateur
+                const checkResponse = await fetch(`backend/controllers/ReactionController.php?action=check&plainte_id=${plainteId}&email=${email}`);
+                const checkData = await checkResponse.json();
+                
+                if (checkData.status === 'success') {
+                    const userReaction = checkData.data.type_reaction;
+                    
+                    // Mettre à jour l'apparence des boutons
+                    const likeButton = document.querySelector(`#like-count-${plainteId}`).parentElement;
+                    const dislikeButton = document.querySelector(`#dislike-count-${plainteId}`).parentElement;
+
+                    likeButton.classList.remove('active');
+                    dislikeButton.classList.remove('active');
+
+                    if (userReaction === 'like') {
+                        likeButton.classList.add('active');
+                    } else if (userReaction === 'dislike') {
+                        dislikeButton.classList.add('active');
+                    }
+                }
+            } catch (error) {
+                console.error('Erreur lors de la mise à jour des réactions:', error);
+            }
+        }
+    </script>
+</body>
+</html>

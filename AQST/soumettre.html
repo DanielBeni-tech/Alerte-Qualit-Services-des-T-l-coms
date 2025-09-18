@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soumettre une plainte - Alerte Qualite Service</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <h1>Alerte Qualite <span>Service</span></h1>
+        </div>
+        <nav>
+            <div class="menu-toggle">
+                <i class="fas fa-bars"></i>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html">Accueil</a></li>
+                <li><a href="plaintes.html">Plaintes</a></li>
+                <li><a href="soumettre.html" class="active">Soumettre</a></li>
+                <li><a href="operateurs.html">Opérateurs</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="page-header">
+        <h2>Soumettre une plainte</h2>
+        <p>Partagez votre expérience pour contribuer à l'amélioration des services télécom au Cameroun</p>
+    </div>
+
+    <section class="complaint-form">
+        <div class="form-container">
+            <form id="complainForm">
+                <div class="form-group">
+                    <label for="nom_plaignant">Nom complet *</label>
+                    <input type="text" id="nom_plaignant" name="nom_plaignant" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email *</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="telephone">Téléphone *</label>
+                    <input type="tel" id="telephone" name="telephone" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="region">Région *</label>
+                    <select id="region" name="region" required>
+                        <option value="">Sélectionnez une région</option>
+                        <option value="Adamaoua">Adamaoua</option>
+                        <option value="Centre">Centre</option>
+                        <option value="Est">Est</option>
+                        <option value="Extrême-Nord">Extrême-Nord</option>
+                        <option value="Littoral">Littoral</option>
+                        <option value="Nord">Nord</option>
+                        <option value="Nord-Ouest">Nord-Ouest</option>
+                        <option value="Ouest">Ouest</option>
+                        <option value="Sud">Sud</option>
+                        <option value="Sud-Ouest">Sud-Ouest</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="ville">Ville *</label>
+                    <input type="text" id="ville" name="ville" placeholder="Votre ville" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="operateur_id">Opérateur télécom *</label>
+                    <select id="operateur_id" name="operateur_id" required>
+                        <option value="">Sélectionnez un opérateur</option>
+                        <option value="1">MTN Cameroun</option>
+                        <option value="2">Orange Cameroun</option>
+                        <option value="3">Camtel</option>
+                        <option value="4">Nexttel</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="type_plainte">Type de plainte *</label>
+                    <select id="type_plainte" name="type_plainte" required>
+                        <option value="">Sélectionnez un type</option>
+                        <option value="Couverture réseau">Couverture réseau</option>
+                        <option value="Vitesse Internet">Vitesse Internet</option>
+                        <option value="Facturation">Facturation</option>
+                        <option value="Service client">Service client</option>
+                        <option value="Qualité des appels">Qualité des appels</option>
+                        <option value="Données mobiles">Données mobiles</option>
+                        <option value="SMS/MMS">SMS/MMS</option>
+                        <option value="Coupures">Coupures de service</option>
+                        <option value="Autre">Autre</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Description détaillée *</label>
+                    <textarea id="description" name="description" rows="6" required></textarea>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Soumettre la plainte</button>
+                    <button type="reset" class="btn btn-secondary">Réinitialiser</button>
+                </div>
+            </form>
+            <div id="formSuccess" class="form-success" style="display: none;">
+                <i class="fas fa-check-circle"></i>
+                <h3>Merci pour votre contribution!</h3>
+                <p>Votre plainte a été enregistrée avec succès. Ensemble, nous pouvons améliorer la qualité des services télécom au Cameroun.</p>
+                <button class="btn" onclick="resetForm()">Soumettre une autre plainte</button>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-container">
+            <div class="footer-section">
+                <h3>Alerte Qualite Service</h3>
+                <p>Initiative citoyenne pour l'amélioration des services télécom au Cameroun.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Liens rapides</h3>
+                <ul>
+                    <li><a href="index.html">Accueil</a></li>
+                    <li><a href="plaintes.html">Plaintes</a></li>
+                    <li><a href="soumettre.html">Soumettre</a></li>
+                    <li><a href="operateurs.html">Opérateurs</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Suivez-nous</h3>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2025 Alerte Qualite Service. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Fonction de validation du numéro de téléphone
+        function validatePhone(phone) {
+            const phoneRegex = /^[0-9]{9,10}$/;
+            return phoneRegex.test(phone);
+        }
+
+        // Fonction de validation de l'email
+        function validateEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        document.getElementById('complainForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Récupération des valeurs
+            const nom = document.getElementById('nom_plaignant').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const telephone = document.getElementById('telephone').value.trim();
+            const region = document.getElementById('region').value;
+            const ville = document.getElementById('ville').value.trim();
+            const operateur = document.getElementById('operateur_id').value;
+            const typePlainte = document.getElementById('type_plainte').value;
+            const description = document.getElementById('description').value.trim();
+
+            // Validation des champs
+            if (!nom || !email || !telephone || !region || !ville || !operateur || !typePlainte || !description) {
+                alert('Veuillez remplir tous les champs obligatoires.');
+                return;
+            }
+
+            if (!validateEmail(email)) {
+                alert('Veuillez entrer une adresse email valide.');
+                return;
+            }
+
+            if (!validatePhone(telephone)) {
+                alert('Veuillez entrer un numéro de téléphone valide (9-10 chiffres).');
+                return;
+            }
+            
+            const formData = {
+                operateur_id: operateur,
+                nom_plaignant: nom,
+                email: email,
+                telephone: telephone,
+                region: region,
+                ville: ville,
+                type_plainte: typePlainte,
+                description: description
+            };
+
+            // Afficher un indicateur de chargement
+            const submitButton = document.querySelector('button[type="submit"]');
+            submitButton.disabled = true;
+            submitButton.textContent = 'Envoi en cours...';
+
+            fetch('backend/controllers/PlainteController.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => {
+                        throw new Error(err.message || 'Erreur réseau');
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('complainForm').style.display = 'none';
+                    document.getElementById('formSuccess').style.display = 'block';
+                } else {
+                    alert(data.message || 'Une erreur est survenue lors de la soumission de la plainte.');
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                alert(error.message || 'Une erreur est survenue lors de la soumission de la plainte. Veuillez réessayer plus tard.');
+            })
+            .finally(() => {
+                // Réactiver le bouton
+                submitButton.disabled = false;
+                submitButton.textContent = 'Soumettre la plainte';
+            });
+        });
+
+        function resetForm() {
+            document.getElementById('complainForm').reset();
+            document.getElementById('complainForm').style.display = 'block';
+            document.getElementById('formSuccess').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
